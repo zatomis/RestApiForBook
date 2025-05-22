@@ -1,8 +1,6 @@
 import logging
-
 from fastapi import APIRouter, Body
 from fastapi_cache.decorator import cache
-
 from src.api.dependencies import DBDep, UserIdDep
 from src.exceptions import ObjectNotFoundException, ReaderNotRegisteredHTTPException
 from src.services.readers import ReaderService

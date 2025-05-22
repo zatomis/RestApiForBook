@@ -35,6 +35,9 @@ class IncorrectException(LibraryException):
 class UserAlreadyExistsException(LibraryException):
     detail = "Пользователь уже существует"
 
+class BookAlreadyExistsException(LibraryException):
+    detail = "Такая книга уже существует"
+
 
 class LibraryHTTPException(HTTPException):
     status_code = 500

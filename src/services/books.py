@@ -1,5 +1,5 @@
 from src.exceptions import ObjectNotFoundException, UserAlreadyExistsException, UserEmailAlreadyExistsHTTPException, \
-    ObjectAlreadyExistsException, ReaderBadIdHTTPException
+    ObjectAlreadyExistsException, ReaderBadIdHTTPException, BookAlreadyExistsException
 from src.schemas.books import BookCreateDTO
 from src.schemas.readers import ReaderCreateDTO, ReaderUpdateDTO
 from src.services.base import BaseService
@@ -8,12 +8,12 @@ from src.services.base import BaseService
 class BookService(BaseService):
     async def create_book(self, book_data: BookCreateDTO):
         try:
-            existing_isbn = await self.db.books.get_one_or_none(email = reader_data.email)
-            if existing_reader:
-                raise UserAlreadyExistsException
-            reader = await self.db.readers.add(reader_data)
+            existing_isbn = await self.db.books.get_one_or_none(isbn = book_data.isbn)
+            if existing_isbn:
+                raise BookAlreadyExistsException
+            book = await self.db.books.add(book_data)
             await self.db.commit()
-            return reader
+            return book
         except (UserAlreadyExistsException):
             raise UserEmailAlreadyExistsHTTPException
 

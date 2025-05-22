@@ -1,24 +1,5 @@
 
 
-@app.post("/books", response_model=Book)
-def create_book(book: BookCreate, db: Session = Depends(get_db)):
-    # Проверка ISBN уникальности
-    if book.isbn:
-        existing = db.query(BookModel).filter_by(isbn=book.isbn).first()
-        if existing:
-            raise HTTPException(400, detail="ISBN уже существует")
-
-    db_book = BookModel(**book.dict())
-    db.add(db_book)
-    try:
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(400, detail=str(e))
-    db.refresh(db_book)
-    return db_book
-
-
 @app.get("/books", response_model=list[Book])
 def get_books(db: Session = Depends(get_db)):
     return db.query(BookModel).all()

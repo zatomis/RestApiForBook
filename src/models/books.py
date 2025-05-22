@@ -9,7 +9,7 @@ class BookModelORM(Base):
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     author: Mapped[str] = mapped_column(String(50), nullable=False)
     publication_year: Mapped[Optional[int]] = mapped_column(Integer)
-    isbn: Mapped[str] = mapped_column(String(20), nullable=False, unique=True, index=True)
+    isbn: Mapped[str] = mapped_column(String(30), nullable=False, unique=True, index=True)
     copies: Mapped[int] = mapped_column(
         Integer,
         default=1,
