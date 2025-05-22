@@ -62,12 +62,35 @@ class ReaderNotRegisteredHTTPException(LibraryHTTPException):
 
 class ReaderBadIdHTTPException(LibraryHTTPException):
     status_code = 401
-    detail = "Не верный id пользователя"
+    detail = "Пользователь не существует"
+
+class BookBadHTTPException(LibraryHTTPException):
+    status_code = 401
+    detail = "Не верный id для обновления "
+
+class BookBadIdHTTPException(LibraryHTTPException):
+    status_code = 401
+    detail = "Не верный id "
+
+
+
+class BookBadCopyHTTPException(LibraryHTTPException):
+    status_code = 401
+    detail = "Копий не может быть меньше 0"
+
+class BookNotFoundHTTPException(LibraryHTTPException):
+    status_code = 401
+    detail = "Такой книги не существует"
+
 
 
 class UserEmailAlreadyExistsHTTPException(LibraryHTTPException):
     status_code = 409
     detail = "Пользователь с такой почтой уже существует"
+
+class BookIsbnAlreadyExistsHTTPException(LibraryHTTPException):
+    status_code = 409
+    detail = "Книга с таким isbn уже существует"
 
 
 class IncorrectPasswordHTTPException(LibraryHTTPException):

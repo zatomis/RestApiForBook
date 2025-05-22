@@ -1,5 +1,5 @@
 from src.exceptions import ObjectNotFoundException, UserAlreadyExistsException, UserEmailAlreadyExistsHTTPException, \
-    ObjectAlreadyExistsException, ReaderBadIdHTTPException
+    ReaderBadIdHTTPException
 from src.schemas.readers import ReaderCreateDTO, ReaderUpdateDTO
 from src.services.base import BaseService
 

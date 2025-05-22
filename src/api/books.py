@@ -2,8 +2,9 @@ import logging
 from fastapi import APIRouter, Body
 from fastapi_cache.decorator import cache
 from src.api.dependencies import DBDep, UserIdDep
-from src.exceptions import ObjectNotFoundException, ReaderNotRegisteredHTTPException
-from src.schemas.books import BookCreateDTO
+from src.exceptions import ObjectNotFoundException, ReaderNotRegisteredHTTPException, BookBadHTTPException, \
+    BookBadIdHTTPException
+from src.schemas.books import BookCreateDTO, BookUpdateDTO
 from src.services.books import BookService
 
 router = APIRouter(prefix="/books", tags=["Управление книгами"])
@@ -52,34 +53,32 @@ async def create_book(db: DBDep, book_data: BookCreateDTO =  Body(
 
 @router.get("")
 @cache(expire=10)
-async def read_readers(user_id: UserIdDep, db: DBDep):
+async def get_books(user_id: UserIdDep, db: DBDep):
     logging.info(f"user {user_id}")
-    return await BookService(db).read_readers()
+    return await BookService(db).get_books()
 
 
-@router.get("/{reader_id}")
-async def read_readers_by_id(reader_id: int, db: DBDep):
+@router.get("/{book_id}")
+async def get_book_by_id(book_id: int, db: DBDep):
     try:
-        return await BookService(db).read_readers_by_id(reader_id)
+        return await BookService(db).get_book_by_id(book_id)
     except ObjectNotFoundException:
-        raise ReaderNotRegisteredHTTPException
+        raise BookBadIdHTTPException
 
 
-@router.put("/{reader_id}")
-async def edit_reader_by_id():
-    pass
-#async def edit_reader_by_id(reader_id: int, db: DBDep, reader_data: ReaderUpdateDTO = Body()):
-#    try:
-#        await BookService(db).edit_reader(reader_id, reader_data)
-#        return {"status": "OK"}
-#    except ObjectNotFoundException:
-#        raise ReaderNotRegisteredHTTPException
-
-
-@router.delete("/{reader_id}")
-async def delete_reader(reader_id: int, db: DBDep):
+@router.put("/{book_id}")
+async def edit_book_by_id(book_id: int, db: DBDep, book_data: BookUpdateDTO = Body()):
     try:
-        await BookService(db).delete_reader(reader_id)
+        await BookService(db).edit_book_by_id(book_id, book_data)
         return {"status": "OK"}
+    except ObjectNotFoundException:
+        raise BookBadHTTPException
+
+
+@router.delete("/{book_id}")
+async def delete_book(book_id: int, db: DBDep):
+    try:
+        await BookService(db).delete_book(book_id)
+        return {"detail": "Книга удалена успешно"}
     except ObjectNotFoundException:
         raise ReaderNotRegisteredHTTPException

@@ -1,6 +1,7 @@
 from src.exceptions import ObjectNotFoundException, UserAlreadyExistsException, UserEmailAlreadyExistsHTTPException, \
-    ObjectAlreadyExistsException, ReaderBadIdHTTPException, BookAlreadyExistsException
-from src.schemas.books import BookCreateDTO
+    ObjectAlreadyExistsException, ReaderBadIdHTTPException, BookAlreadyExistsException, BookBadIdHTTPException, \
+    BookBadHTTPException, BookNotFoundHTTPException, BookIsbnAlreadyExistsHTTPException, BookBadCopyHTTPException
+from src.schemas.books import BookCreateDTO, BookUpdateDTO
 from src.schemas.readers import ReaderCreateDTO, ReaderUpdateDTO
 from src.services.base import BaseService
 
@@ -10,45 +11,52 @@ class BookService(BaseService):
         try:
             existing_isbn = await self.db.books.get_one_or_none(isbn = book_data.isbn)
             if existing_isbn:
-                raise BookAlreadyExistsException
+                raise BookIsbnAlreadyExistsHTTPException
             book = await self.db.books.add(book_data)
             await self.db.commit()
             return book
-        except (UserAlreadyExistsException):
-            raise UserEmailAlreadyExistsHTTPException
+        except (BookAlreadyExistsException):
+            raise BookIsbnAlreadyExistsHTTPException
 
     async def get_books(self):
-        return await self.db.readers.get_all()
+        return await self.db.books.get_all()
 
-    async def get_book_by_id(self, reader_id: int):
-        return await self.db.readers.get_one(id=reader_id)
 
-    async def edit_book(self, reader_id: int, reader_data: ReaderUpdateDTO):
+    async def get_book_by_id(self, book_id: int):
         try:
-            existing_reader = await self.db.readers.get_one_or_none(id = reader_id)
-            if existing_reader:
-                existing_reader_mail = await self.db.readers.get_one_or_none(email = reader_data.email)
-                if not existing_reader_mail:
-                    await self.db.readers.edit(reader_data, id=reader_id)
+            return await self.db.books.get_one(id=book_id)
+        except (ObjectNotFoundException):
+            raise BookBadIdHTTPException
+
+
+    async def edit_book_by_id(self, book_id: int, book_data: BookUpdateDTO):
+        try:
+            existing_book = await self.db.books.get_one_or_none(id = book_id)
+            if existing_book:
+                existing_isbn = await self.db.books.get_one_or_none(isbn = book_data.isbn)
+                if not existing_isbn:
+                    if book_data.copies < 0:
+                        raise BookBadCopyHTTPException
+                    await self.db.books.edit(book_data, id=book_id)
                     await self.db.commit()
                 else:
-                    raise UserEmailAlreadyExistsHTTPException
+                    raise BookIsbnAlreadyExistsHTTPException
             else:
-                raise ReaderBadIdHTTPException
+                raise BookNotFoundHTTPException
         except (ObjectNotFoundException):
-            raise ReaderBadIdHTTPException
+            raise BookNotFoundHTTPException
 
 
 
-    async def delete_book(self, reader_id: int):
+    async def delete_book(self, book_id: int):
         try:
-            existing_reader = await self.db.readers.get_one_or_none(id = reader_id)
-            if existing_reader:
-                await self.db.readers.delete(id=reader_id)
+            existing_book = await self.db.books.get_one_or_none(id = book_id)
+            if existing_book:
+                await self.db.books.delete(id=book_id)
                 await self.db.commit()
             else:
-                raise ReaderBadIdHTTPException
+                raise BookBadIdHTTPException
         except (ObjectNotFoundException):
-            raise ReaderBadIdHTTPException
+            raise BookBadIdHTTPException
 
 
