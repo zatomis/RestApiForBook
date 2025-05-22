@@ -1,0 +1,15 @@
+services:
+
+  postgres:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_DB: "library"
+      POSTGRES_USER: "libraryuser"
+      POSTGRES_PASSWORD: "librarypass"
+    ports:
+      - "15432:5432"
+
+  redis_auth:
+    image: redis:7.4
+    ports:
+      - "6379:6379"
