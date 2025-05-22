@@ -12,7 +12,8 @@ logging.basicConfig(level=logging.INFO)
 
 
 @router.post("")
-async def create_book(db: DBDep, book_data: BookCreateDTO =  Body(
+@cache(expire=10)
+async def create_book(user_id: UserIdDep, db: DBDep, book_data: BookCreateDTO =  Body(
         openapi_examples={
             "1": {
                 "summary": "Война и Мир",
@@ -53,13 +54,13 @@ async def create_book(db: DBDep, book_data: BookCreateDTO =  Body(
 
 @router.get("")
 @cache(expire=10)
-async def get_books(user_id: UserIdDep, db: DBDep):
-    logging.info(f"user {user_id}")
+async def get_books(db: DBDep):
     return await BookService(db).get_books()
 
 
 @router.get("/{book_id}")
-async def get_book_by_id(book_id: int, db: DBDep):
+@cache(expire=10)
+async def get_book_by_id(book_id: int,user_id: UserIdDep, db: DBDep):
     try:
         return await BookService(db).get_book_by_id(book_id)
     except ObjectNotFoundException:
@@ -67,7 +68,8 @@ async def get_book_by_id(book_id: int, db: DBDep):
 
 
 @router.put("/{book_id}")
-async def edit_book_by_id(book_id: int, db: DBDep, book_data: BookUpdateDTO = Body()):
+@cache(expire=10)
+async def edit_book_by_id(book_id: int,user_id: UserIdDep, db: DBDep, book_data: BookUpdateDTO = Body()):
     try:
         await BookService(db).edit_book_by_id(book_id, book_data)
         return {"status": "OK"}
@@ -76,7 +78,8 @@ async def edit_book_by_id(book_id: int, db: DBDep, book_data: BookUpdateDTO = Bo
 
 
 @router.delete("/{book_id}")
-async def delete_book(book_id: int, db: DBDep):
+@cache(expire=10)
+async def delete_book(book_id: int,user_id: UserIdDep, db: DBDep):
     try:
         await BookService(db).delete_book(book_id)
         return {"detail": "Книга удалена успешно"}

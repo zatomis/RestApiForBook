@@ -11,7 +11,8 @@ logging.basicConfig(level=logging.INFO)
 
 
 @router.post("")
-async def create_reader(db: DBDep, reader_data: ReaderCreateDTO = Body()):
+@cache(expire=10)
+async def create_reader(user_id: UserIdDep, db: DBDep, reader_data: ReaderCreateDTO = Body()):
     reader = await ReaderService(db).create_reader(reader_data)
     return {"status": "OK", "data": reader}
 
@@ -24,7 +25,8 @@ async def read_readers(user_id: UserIdDep, db: DBDep):
 
 
 @router.get("/{reader_id}")
-async def read_readers_by_id(reader_id: int, db: DBDep):
+@cache(expire=10)
+async def read_readers_by_id(reader_id: int, user_id: UserIdDep, db: DBDep):
     try:
         return await ReaderService(db).read_readers_by_id(reader_id)
     except ObjectNotFoundException:
@@ -32,7 +34,8 @@ async def read_readers_by_id(reader_id: int, db: DBDep):
 
 
 @router.put("/{reader_id}")
-async def edit_reader_by_id(reader_id: int, db: DBDep, reader_data: ReaderUpdateDTO = Body()):
+@cache(expire=10)
+async def edit_reader_by_id(reader_id: int, user_id: UserIdDep, db: DBDep, reader_data: ReaderUpdateDTO = Body()):
     try:
         await ReaderService(db).edit_reader(reader_id, reader_data)
         return {"status": "OK"}
@@ -41,7 +44,8 @@ async def edit_reader_by_id(reader_id: int, db: DBDep, reader_data: ReaderUpdate
 
 
 @router.delete("/{reader_id}")
-async def delete_reader(reader_id: int, db: DBDep):
+@cache(expire=10)
+async def delete_reader(reader_id: int,user_id: UserIdDep, db: DBDep):
     try:
         await ReaderService(db).delete_reader(reader_id)
         return {"status": "OK"}
