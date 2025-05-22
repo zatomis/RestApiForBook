@@ -1,58 +1,55 @@
-from datetime import date
 
-from src.exceptions import (
-    check_date_to_after_date_from,
-    ObjectNotFoundException,
-    HotelNotFoundException,
-)
-from src.schemas.hotels import HotelAddDTO, HotelPatchDTO, HotelDTO
-from src.services.base import BaseService
+# READ (все)
+@app.get("/readers/", response_model=List[Reader])
+def read_readers(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    readers = db.query(ReaderDB).offset(skip).limit(limit).all()
+    return readers
 
 
-class HotelService(BaseService):
-    async def get_filtered_by_time(
-        self,
-        pagination,
-        location: str | None,
-        title: str | None,
-        date_from: date,
-        date_to: date,
-    ):
-        check_date_to_after_date_from(date_from, date_to)
-        per_page = pagination.per_page or 5
-        return await self.db.hotels.get_filtered_by_time(
-            date_from=date_from,
-            date_to=date_to,
-            location=location,
-            title=title,
-            limit=per_page,
-            offset=per_page * (pagination.page - 1),
-        )
+# READ (по ID)
+@app.get("/readers/{reader_id}", response_model=Reader)
+def read_reader(reader_id: int, db: Session = Depends(get_db)):
+    db_reader = db.query(ReaderDB).filter(ReaderDB.id == reader_id).first()
+    if not db_reader:
+        raise HTTPException(status_code=404, detail="Reader not found")
+    return db_reader
 
-    async def get_hotel(self, hotel_id: int):
-        return await self.db.hotels.get_one(id=hotel_id)
 
-    async def add_hotel(self, data: HotelAddDTO):
-        hotel = await self.db.hotels.add(data)
-        await self.db.commit()
-        return hotel
+# UPDATE
+@app.put("/readers/{reader_id}", response_model=Reader)
+def update_reader(
+        reader_id: int,
+        reader_data: ReaderUpdate,
+        db: Session = Depends(get_db)
+):
+    db_reader = db.query(ReaderDB).filter(ReaderDB.id == reader_id).first()
+    if not db_reader:
+        raise HTTPException(status_code=404, detail="Reader not found")
 
-    async def edit_hotel(self, hotel_id: int, data: HotelAddDTO):
-        await self.db.hotels.edit(data, id=hotel_id)
-        await self.db.commit()
+    # Обновление только переданных полей
+    for key, value in reader_data.dict().items():
+        if value is not None:
+            setattr(db_reader, key, value)
 
-    async def edit_hotel_partially(
-        self, hotel_id: int, data: HotelPatchDTO, exclude_unset: bool = False
-    ):
-        await self.db.hotels.edit(data, exclude_unset=exclude_unset, id=hotel_id)
-        await self.db.commit()
+    # Проверка уникальности email при обновлении
+    if reader_data.email and db.query(ReaderDB).filter(
+            ReaderDB.email == reader_data.email,
+            ReaderDB.id != reader_id
+    ).first():
+        raise HTTPException(status_code=400, detail="Email already exists")
 
-    async def delete_hotel(self, hotel_id: int):
-        await self.db.hotels.delete(id=hotel_id)
-        await self.db.commit()
+    db.commit()
+    db.refresh(db_reader)
+    return db_reader
 
-    async def get_hotel_with_check(self, hotel_id: int) -> HotelDTO:
-        try:
-            return await self.db.hotels.get_one(id=hotel_id)
-        except ObjectNotFoundException:
-            raise HotelNotFoundException
+
+# DELETE
+@app.delete("/readers/{reader_id}", response_model=dict)
+def delete_reader(reader_id: int, db: Session = Depends(get_db)):
+    db_reader = db.query(ReaderDB).filter(ReaderDB.id == reader_id).first()
+    if not db_reader:
+        raise HTTPException(status_code=404, detail="Reader not found")
+
+    db.delete(db_reader)
+    db.commit()
+    return {"detail": "Reader deleted"}
