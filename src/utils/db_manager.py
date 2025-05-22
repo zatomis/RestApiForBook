@@ -1,3 +1,4 @@
+from src.repositories.books import BooksRepository
 from src.repositories.readers import ReadersRepository
 from src.repositories.users import UsersRepository
 
@@ -10,6 +11,7 @@ class DBManager:
         self.session = self.session_factory()
         self.users = UsersRepository(self.session)
         self.readers = ReadersRepository(self.session)
+        self.books = BooksRepository(self.session)
         return self
 
     async def __aexit__(self, *args):
