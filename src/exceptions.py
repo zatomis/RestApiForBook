@@ -53,6 +53,15 @@ class EmailNotRegisteredHTTPException(LibraryHTTPException):
     detail = "Пользователь с таким email не зарегистрирован"
 
 
+class ReaderNotRegisteredHTTPException(LibraryHTTPException):
+    status_code = 401
+    detail = "Пользователь не зарегистрирован"
+
+class ReaderBadIdHTTPException(LibraryHTTPException):
+    status_code = 401
+    detail = "Не верный id пользователя"
+
+
 class UserEmailAlreadyExistsHTTPException(LibraryHTTPException):
     status_code = 409
     detail = "Пользователь с такой почтой уже существует"
