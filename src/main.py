@@ -17,6 +17,7 @@ from src.init import redis_manager  # noqa: E402
 from src.api.auth import router as router_auth  # noqa: E402
 from src.api.readers import router as router_readers  # noqa: E402
 from src.api.books import router as router_books  # noqa: E402
+from src.api.services import router as router_services  # noqa: E402
 
 
 @asynccontextmanager
@@ -33,6 +34,7 @@ app = FastAPI(docs_url=None, lifespan=lifespan)
 app.include_router(router_auth)
 app.include_router(router_readers)
 app.include_router(router_books)
+app.include_router(router_services)
 
 
 @app.get("/docs", include_in_schema=False)

@@ -1,3 +1,4 @@
+from src.models import BorrowedBookORM
 from src.models.books import BookModelORM
 from src.models.readers import ReadersORM
 from src.models.users import UsersOrm
@@ -17,4 +18,8 @@ class BookDataMapper(DataMapper):
 
 class ReaderDataMapper(DataMapper):
     db_model = ReadersORM
+    schema = ReaderDTO
+
+class ServicesDataMapper(DataMapper):
+    db_model = BorrowedBookORM
     schema = ReaderDTO

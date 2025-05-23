@@ -1,7 +1,6 @@
 from src.models.books import BookModelORM
-from src.models.readers import ReadersORM
 from src.repositories.base import BaseRepository
-from src.repositories.mappers.mappers import UserDataMapper, BookDataMapper
+from src.repositories.mappers.mappers import BookDataMapper
 
 
 class BooksRepository(BaseRepository):
