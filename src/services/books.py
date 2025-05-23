@@ -46,7 +46,11 @@ class BookService(BaseService):
         except (ObjectNotFoundException):
             raise BookNotFoundHTTPException
 
-
+    async def edit_book_partially(
+        self, book_id: int, data: BookUpdateDTO, exclude_unset: bool = False
+    ):
+        await self.db.books.edit(data, exclude_unset=exclude_unset, id=book_id)
+        await self.db.commit()
 
     async def delete_book(self, book_id: int):
         try:
@@ -60,3 +64,13 @@ class BookService(BaseService):
             raise BookBadIdHTTPException
 
 
+    async def partially_edit_book(
+        self,
+        book_id: int,
+        book_data: BookUpdateDTO,
+    ):
+
+        #_room_data_dict = book_data.model_dump(exclude_unset=True)
+        #_room_data = BookUpdateDTO(hotel_id=hotel_id, **_room_data_dict)
+        await self.db.books.edit(book_data, exclude_unset=True, id=book_id)
+        await self.db.commit()

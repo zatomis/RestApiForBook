@@ -19,9 +19,9 @@ class BorrowedBookORM(Base):
     )
     return_date: Mapped[datetime | None] = mapped_column(Date, nullable=True)
 
-    book: Mapped["Book"] = relationship(
-        back_populates="borrowed_books", lazy="joined"
-    )
-    reader: Mapped["Reader"] = relationship(
-        back_populates="borrowed_books", lazy="joined"
-    )
+    #book: Mapped["BookModelORM"] = relationship(
+    #    back_populates="borrowed_books", lazy="joined"
+    #)
+    #reader: Mapped["ReadersORM"] = relationship(
+    #    back_populates="borrowed_books", lazy="joined"
+    #)

@@ -85,3 +85,14 @@ async def delete_book(book_id: int,user_id: UserIdDep, db: DBDep):
         return {"detail": "Книга удалена успешно"}
     except ObjectNotFoundException:
         raise ReaderNotRegisteredHTTPException
+
+
+
+@router.patch("/{book_id}")
+async def partially_edit_book(
+    book_id: int,
+    book_data: BookUpdateDTO,
+    db: DBDep,
+):
+    await BookService(db).partially_edit_book(book_id, book_data)
+    return {"status": "OK"}

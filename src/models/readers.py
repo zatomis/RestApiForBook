@@ -11,9 +11,9 @@ class ReadersORM(Base):
     name: Mapped[str] = mapped_column(String(20), nullable=False)
     email: Mapped[str] = mapped_column(String(200), unique=True, index=True, nullable=False)
     # Связь один-ко-многим с BorrowedBook
-    borrowed_books: Mapped[List["BorrowedBookORM"]] = relationship(
-        back_populates="reader",  #Связь с BorrowedBook
-        lazy="select",
-        cascade="all, delete"
-    )
+    #borrowed_books: Mapped[List["BorrowedBookORM"]] = relationship(
+    #    back_populates="reader",  #Связь с BorrowedBook
+    #    lazy="select",
+    #    cascade="all, delete"
+    #)
 
