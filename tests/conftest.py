@@ -1,5 +1,4 @@
 # ruff: noqa: E402
-import json
 from typing import AsyncGenerator
 from unittest import mock
 
@@ -9,7 +8,7 @@ import pytest
 
 from src.api.dependencies import get_db
 from src.config import settings
-from src.database import Base, async_session_maker_null_pool
+from src.database import async_session_maker_null_pool
 from src.main import app
 from src.models import *  # noqa
 from httpx import AsyncClient

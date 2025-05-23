@@ -1,7 +1,6 @@
 from datetime import datetime
-from typing import Optional
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, CheckConstraint, Integer, ForeignKey, Date, func
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Integer, ForeignKey, Date, func
 from src.database import Base
 
 class BorrowedBookORM(Base):
@@ -18,10 +17,3 @@ class BorrowedBookORM(Base):
         Date, server_default=func.now()
     )
     return_date: Mapped[datetime | None] = mapped_column(Date, nullable=True)
-
-    #book: Mapped["BookModelORM"] = relationship(
-    #    back_populates="borrowed_books", lazy="joined"
-    #)
-    #reader: Mapped["ReadersORM"] = relationship(
-    #    back_populates="borrowed_books", lazy="joined"
-    #)

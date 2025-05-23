@@ -10,7 +10,7 @@ from src.exceptions import (
     EmailNotRegisteredException,
     IncorrectPasswordException,
     ObjectAlreadyExistsException,
-    UserAlreadyExistsException, IncorrectException, EmailNotRegisteredHTTPException,
+    UserAlreadyExistsException, EmailNotRegisteredHTTPException,
 )
 from src.schemas.users import UserRequestAdd, UserAdd
 from src.services.base import BaseService

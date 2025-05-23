@@ -1,5 +1,5 @@
-from typing import Optional, List
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from typing import Optional
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import String, CheckConstraint, Integer
 from src.database import Base
 
@@ -16,13 +16,6 @@ class BookModelORM(Base):
         nullable=False,
         server_default="1"  # Для бд где нужен дефолт на уровне БД
     )
-    # Связь один-ко-многим с BorrowedBook
-    #borrowed_books: Mapped[List["BorrowedBookORM"]] = relationship(
-    #    back_populates="book",  #Связь с BorrowedBook
-    #    lazy="select",
-    #    cascade="all, delete"
-    #)
-
     __table_args__ = (
         CheckConstraint('copies >= 0'),
     )

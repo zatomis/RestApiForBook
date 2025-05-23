@@ -1,8 +1,6 @@
-from src.exceptions import ObjectNotFoundException, UserAlreadyExistsException, UserEmailAlreadyExistsHTTPException, \
-    ObjectAlreadyExistsException, ReaderBadIdHTTPException, BookAlreadyExistsException, BookBadIdHTTPException, \
-    BookBadHTTPException, BookNotFoundHTTPException, BookIsbnAlreadyExistsHTTPException, BookBadCopyHTTPException
+from src.exceptions import ObjectNotFoundException, BookAlreadyExistsException, BookBadIdHTTPException, \
+    BookNotFoundHTTPException, BookIsbnAlreadyExistsHTTPException, BookBadCopyHTTPException
 from src.schemas.books import BookCreateDTO, BookUpdateDTO
-from src.schemas.readers import ReaderCreateDTO, ReaderUpdateDTO
 from src.services.base import BaseService
 
 
@@ -70,7 +68,5 @@ class BookService(BaseService):
         book_data: BookUpdateDTO,
     ):
 
-        #_room_data_dict = book_data.model_dump(exclude_unset=True)
-        #_room_data = BookUpdateDTO(hotel_id=hotel_id, **_room_data_dict)
         await self.db.books.edit(book_data, exclude_unset=True, id=book_id)
         await self.db.commit()
