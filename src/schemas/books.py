@@ -7,6 +7,9 @@ class BookCreateDTO(BaseModel):
     isbn: str | None = None
     copies: int = 1
 
+class BookTestDTO(BookCreateDTO):
+    id: int
+
 
 class BookDTO(BookCreateDTO):
     id: int
